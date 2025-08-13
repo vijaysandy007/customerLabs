@@ -26,11 +26,16 @@ function startWorker() {
                 }
             }
 
-            await Log.findByIdAndUpdate(log_id, {
-                processed_timestamp: new Date(),
-                status: success ? 'success' : 'failed'
-            });
-            
+            await Log.findOneAndUpdate({ _id: log_id },
+
+                {
+                    $set: {
+                        processed_timestamp: new Date(),
+                        status: success ? 'success' : 'failed'
+                    }
+                },
+                { new: true }
+            )
             worker.on('completed', job => {
                 console.log("Completed", job.id);
             });
